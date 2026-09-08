@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WagadTech — Digital Link Hub</title>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:#0b0f14;color:#fff}
+.wrap{max-width:700px;margin:auto;padding:18px 14px 40px}
+header{text-align:center;padding:20px 10px 16px}
+.logo{width:58px;height:58px;margin:auto;border-radius:16px;background:linear-gradient(135deg,#ff8a00,#1677ff);display:grid;place-items:center;font-weight:900;font-size:24px}
+h1{margin:10px 0 4px;font-size:28px}.tag{color:#b9c1cc;font-size:14px}
+.search{width:100%;padding:14px;border-radius:14px;border:1px solid #28313d;background:#121820;color:white;font-size:16px;margin:10px 0 18px}
+.category{margin:20px 0}.category h2{font-size:18px;margin:0 0 10px}
+.card{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;background:#121820;border:1px solid #202a36;padding:14px;border-radius:15px;margin:9px 0}
+.icon{font-size:24px;width:34px;text-align:center}.ct{flex:1}.name{font-weight:700}.desc{font-size:12px;color:#9da7b4;margin-top:3px}
+.addbox{margin-top:26px;background:#121820;border:1px solid #293545;border-radius:18px;padding:16px}
+.addbtn{width:100%;padding:13px;border:0;border-radius:12px;background:linear-gradient(90deg,#ff8a00,#ffb000);font-weight:800;font-size:16px;cursor:pointer}
+form{display:none;margin-top:15px} form.show{display:block}
+input,select{width:100%;padding:12px;margin:7px 0;border-radius:10px;border:1px solid #303b49;background:#0c1117;color:#fff}
+.submit{width:100%;padding:12px;border:0;border-radius:10px;background:#1677ff;color:white;font-weight:800;margin-top:6px}
+.note{font-size:12px;color:#8994a2;margin-top:10px;line-height:1.5}
+footer{text-align:center;color:#687384;font-size:12px;margin-top:25px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="logo">WT</div>
+<h1>WagadTech</h1>
+<div class="tag">Digital काम — आपरी Wagdi भाषा में</div>
+</header>
+
+<input id="search" class="search" placeholder="🔎 Link खोजो...">
+
+<div id="links"></div>
+
+<div class="addbox">
+<button class="addbtn" onclick="toggleForm()">＋ नया Link जोड़ो</button>
+<form id="addForm">
+<input id="name" placeholder="Link का नाम" required>
+<input id="desc" placeholder="छोटा Description">
+<input id="url" type="url" placeholder="https://example.com" required>
+<select id="cat">
+<option>🏛️ सरकारी डिजिटल काम</option>
+<option>🚗 वाहन अर यात्रा</option>
+<option>📱 Social Media</option>
+<option>🤖 AI & Useful Tools</option>
+<option>🔐 Digital Safety</option>
+<option>⭐ अन्य जरूरी Link</option>
+</select>
+<input id="icon" placeholder="Icon (जैसे 🔗)" maxlength="3">
+<button class="submit">Link Save करो</button>
+<div class="note">यह version नए links को इसी browser/device में save करता है। सभी visitors को नया link दिखाने के लिए online database/admin system जोड़ना होगा।</div>
+</form>
+</div>
+
+<footer>⚠️ OTP, PIN, Password या Bank Details किसी के साथ शेयर न करें।</footer>
+</div>
+
+<script>
+const defaults=[
+["🏛️ सरकारी डिजिटल काम","🪪","Aadhaar","आधिकारिक Aadhaar सेवाएं","https://uidai.gov.in/"],
+["🏛️ सरकारी डिजिटल काम","💳","PAN / Income Tax","Income Tax की official website","https://www.incometax.gov.in/"],
+["🏛️ सरकारी डिजिटल काम","🗳️","Voter ID","मतदाता सेवाएं","https://voters.eci.gov.in/"],
+["🏛️ सरकारी डिजिटल काम","📄","DigiLocker","Digital documents और certificates","https://www.digilocker.gov.in/web/home"],
+["🏛️ सरकारी डिजिटल काम","🏛️","सरकारी योजनाएं","सरकारी योजनाएं खोजें","https://www.myscheme.gov.in/"],
+["🏛️ सरकारी डिजिटल काम","🇮🇳","National Portal","भारत सरकार का national portal","https://www.india.gov.in/"],
+["🚗 वाहन अर यात्रा","🚆","IRCTC","Train ticket booking","https://www.irctc.co.in/"],
+["🚗 वाहन अर यात्रा","🚘","Parivahan","Vehicle और driving licence services","https://parivahan.gov.in/"],
+["🚗 वाहन अर यात्रा","🚙","Vahan","Vehicle related services","https://vahan.parivahan.gov.in/"],
+["🚗 वाहन अर यात्रा","🪪","Sarathi","Driving licence services","https://sarathi.parivahan.gov.in/"],
+["📱 Social Media","📸","Instagram","Instagram खोलें","https://www.instagram.com/"],
+["📱 Social Media","💬","WhatsApp","WhatsApp की official website","https://www.whatsapp.com/"],
+["📱 Social Media","f","Facebook","Facebook खोलें","https://www.facebook.com/"],
+["📱 Social Media","▶️","YouTube","YouTube खोलें","https://www.youtube.com/"],
+["🤖 AI & Useful Tools","🤖","ChatGPT","AI से काम आसान करें","https://chatgpt.com/"],
+["🤖 AI & Useful Tools","✨","Google Gemini","AI assistant","https://gemini.google.com/"],
+["🤖 AI & Useful Tools","🎨","Canva","Design और poster बनाएं","https://www.canva.com/"],
+["🤖 AI & Useful Tools","☁️","Google Drive","Files online save करें","https://drive.google.com/"],
+["🔐 Digital Safety","🛡️","Cyber Crime Reporting","Cyber fraud की शिकायत","https://www.cybercrime.gov.in/"],
+["🔐 Digital Safety","📱","Sanchar Saathi","Mobile और SIM safety services","https://sancharsaathi.gov.in/"]
+];
+
+let custom=JSON.parse(localStorage.getItem("wagadtech_links")||"[]");
+function all(){return defaults.concat(custom)}
+function render(filter=""){
+ const box=document.getElementById("links"); box.innerHTML="";
+ const groups={};
+ all().filter(x=>(x[2]+" "+x[3]).toLowerCase().includes(filter.toLowerCase())).forEach(x=>(groups[x[0]]??=[]).push(x));
+ Object.entries(groups).forEach(([cat,items])=>{
+  const sec=document.createElement("section"); sec.className="category";
+  sec.innerHTML="<h2>"+cat+"</h2>";
+  items.forEach(x=>{
+   const a=document.createElement("a"); a.className="card"; a.href=x[4]; a.target="_blank"; a.rel="noopener";
+   a.innerHTML=`<div class="icon">${x[1]}</div><div class="ct"><div class="name">${x[2]}</div><div class="desc">${x[3]}</div></div><div>›</div>`;
+   sec.appendChild(a);
+  });
+  box.appendChild(sec);
+ });
+}
+function toggleForm(){document.getElementById("addForm").classList.toggle("show")}
+document.getElementById("search").addEventListener("input",e=>render(e.target.value));
+document.getElementById("addForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const x=[
+  document.getElementById("cat").value,
+  document.getElementById("icon").value||"🔗",
+  document.getElementById("name").value.trim(),
+  document.getElementById("desc").value.trim()||"Useful link",
+  document.getElementById("url").value.trim()
+ ];
+ custom.push(x); localStorage.setItem("wagadtech_links",JSON.stringify(custom));
+ e.target.reset(); toggleForm(); render();
+ alert("नया Link save हो गया ✅");
+});
+render();
+</script>
+</body>
+</html>
